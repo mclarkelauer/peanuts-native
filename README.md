@@ -130,6 +130,10 @@ Hold a game's cover to open its own page: picture and speed settings, mods, the 
 After an app update, rebuilding every game is strongly recommended: hold the cover, open **Storage**, tap
 **Build again**, then **Rebuild**.
 
+To get a build's space back, Settings › Library › **Built games** (or the **Built games** section of Settings ›
+**Storage**) lists every built game with the space its build takes; **Delete build…** removes everything the build
+wrote and lists the game as one to build again. Saves and your dumps stay.
+
 ## Settings worth knowing
 
 - **Console mode**: Docked or Handheld, for all games in Settings and per game on its page. It can also be changed

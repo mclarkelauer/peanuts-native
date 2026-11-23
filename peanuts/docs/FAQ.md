@@ -311,6 +311,7 @@ Do not remove the card during a build or while a game from it runs.
 | **Build again** | Hold the cover › **Storage** tab | Opens that sheet for a built game. You then tap **Rebuild**. |
 | **Prepare again** | Hold the cover › **Storage** tab, only for a game added as a dump folder | Remakes only the parts of the pack that do not fit, from the dump. It does not import or touch the companion. |
 | **Build with mods** | Hold the cover › **Game** tab › **Mods** | Makes a separate build that carries code mods. See [Mods](#mods). |
+| **Delete the build…** | The sheet of a built game, under Rebuild; also Settings › Library › **Built games** and Settings › **Storage** › Built games | Deletes everything the build wrote (working files, pack, shaders, builds with mods) and lists the game as one to build again. Your saves and dumps stay; the `.nup` stays unless you tick it. See [below](#how-do-i-free-up-storage). |
 | **Import pack…** | The sheet of a game that is not built, under Build; for a built game, hold the cover › **Storage** tab | Puts in a pack made on a computer or exported from another phone. See [below](#can-i-use-a-pack-made-on-a-computer-or-on-another-phone). |
 
 A tap on a ready cover plays the game, so the way to its sheet is hold the cover › **Storage** › **Build again**.
@@ -394,6 +395,7 @@ A game built by an older version whose original was deleted before that, and who
 
 - Settings › Library › **Free up space** deletes the original dump of a game that is already built. The game keeps playing from its built copy, and keeps its cover. Keep the original if you will add a later game update.
 - Settings › Library › **Storage** removes leftovers and old files. It never removes saves.
+- Settings › Library › **Built games** (also the **Built games** section of Settings › Storage, and **Delete the build…** on the game's sheet) lists every built game with the space its build takes. **Delete build…** asks first and names every folder that goes: the `<title ID>-work` folder (rewritten code, translated shaders, the Prepare job, the companion), the pack and its shader library, builds with mods, and the app's own files for the game (temporary files, logs, DLC links). The game is then listed as one to build again, exactly as before its first Build. Your saves, your dumps and the game's settings stay. The `.nup` Build made from your NSP/XCI stays too, unless you tick **Also delete the .nup**, which is offered only while the dumps it came from are still in your folders. It is refused while a build or a game runs.
 - A game imported with an update by 0.1.6 or older: **Import again** makes its `.nup` smaller, see [Why is a `.nup` smaller since 0.1.7?](#why-is-a-nup-smaller-since-017).
 
 ### Why is a `.nup` smaller since 0.1.7?
