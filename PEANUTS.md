@@ -95,6 +95,10 @@ Banana Native ships several releases a day, so this fork is kept as a **thin ove
      line in it; too much for a one-line hook, as `pack_android.py`'s, so block-marked. `peanuts/UPSTREAM-EDITS.md` Round 49.
    - `android/app/src/main/java/dev/nxnative/android/MainActivity.java` — (2026-11-21, Home's first focus) `buildHome`'s header line (the rebrand's):
      `dev.peanuts.ui.Library.homeHeader` makes the build line plain text, so a controller's first focus is the first cover. Round 53.
+   - `android/app/src/main/java/dev/nxnative/android/StorageUi.java` — (2026-11-23, Delete build) one line in `show()` after upstream's "Remove <game> data…"
+     buttons: `dev.peanuts.ui.BuildDeleteUi.section(a, box, d)` adds the **Built games** section (each built game with its size and Delete build…). The files
+     part is `dev.peanuts.build.BuildFiles`; the same sheet is Settings › Library › **Built games** and the game sheet's **Delete the build…**. `peanuts/UPSTREAM-EDITS.md`
+     Round 55.
 3. **Settings go through upstream's own mechanisms**: `env.txt` keys named `PN_*`, `settings.tsv` rows, `DM_CTL` lines. No new settings UI inside upstream classes.
 4. **Never reformat or "fix" upstream files.** A general fix belongs upstream as a PR to Banana Native (its AGENTS.md prefers general changes), then it arrives by rebase.
 5. **Branches:** `upstream/android` is Banana Native; `peanuts` is this overlay, always a linear set of commits on top of a Banana Native tag. History is rewritten on every update (rebase, never merge).
@@ -352,3 +356,14 @@ The script fetches, rebases `peanuts` onto the target, then checks that every `P
 - 2026-11-22 (the review of PR #336): the steady and the user clock read the real-time clock once a run and advance it with `CLOCK_BOOTTIME`, so a correction of
   the phone's clock (network or carrier time) can no longer make a span within a run negative; it reaches the game at its next start. `hle_time.c` `host_rt_ns`;
   `t_peanuts_time` case 8. UPSTREAM-EDITS Round 54.
+- 2026-11-23 (Delete build, the Ayn Thor fork's first change): a built game's build out of the storage and the game back to one to build, as before its
+  first Build. Settings › Storage gets a **Built games** section (one hook line in `StorageUi.show`), Settings › Library a **Built games** row, the game sheet a
+  **Delete the build…** button under Rebuild. `dev.peanuts.build.BuildFiles` (no Android types) finds what a build wrote with its size: the `<title ID>-work` folders
+  (beside the game, its parent's, DumpCheck.workOf's, a build folder's), the pack when it is the app's own (packs/, a work folder, `<build folder>/<title ID>/pack`),
+  the builds with code mods, temp/, the run and build logs, aoc/, the packer's kept split scan, translated shaders and Unreal archives, the companion package; the
+  `.nup` Build made from the player's NSP/XCI is a separate tick box, off by default, only while those dumps are there. Never saves (the app's save roots, picked
+  folders, siblings named after them), the dump folder, the dumps, the game file, a library root; a pack the player picked or copied stays and is named. The
+  state: `dev.peanuts.ui.BuildDeleteUi` removes upstream's list entries whose file or pack went (Game.load/save under Game's lock, as Remove from list), the picked
+  pack folder and Home's remembered Prepare job when they went, then `Library.rescan`: `LibraryScanner.packOf` finds no pack, so the cover reads Build. Refused
+  while a build, a game, Prepare or a pack export runs. Test: `peanuts/tests/test_build_delete.py` (`BuildFilesJvmTest`, 81 checks). Not yet run on the Thor.
+  UPSTREAM-EDITS Round 55.

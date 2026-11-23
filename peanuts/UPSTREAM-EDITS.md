@@ -2097,3 +2097,20 @@ Tears of the Kingdom's Depths caves drew chunks with another chunk's vertices fo
 | `docs/reference/rendering.md`, `docs/agents/symptoms.md` | 1 each | the entry and its symptom line | `<!-- PEANUTS -->` |
 
 Tests: the `t_android_*` suite; on the AYN Thor (Turnip v26.2.0-R5), the owner's Depths cave save: per-frame cave draw count changes 906 → 11 in about 1,300 frames. Upstream candidate: yes (the replay code is upstream's).
+
+### Round 55, Delete a game's build (2026-11-23, the Ayn Thor fork)
+
+A built game took its space for good: upstream's Settings › Storage › Remove game data takes only a pack in the app's storage and leaves the game listed, and the
+library's own `<title ID>-work` folders, a build folder's pack and the `.nup` Build made had no button at all. Now every built game is listed with the space its
+build takes, and one tap deletes it and puts the game back to one to build, as before its first Build (`dev.peanuts.build.BuildFiles`, `dev.peanuts.ui.BuildDeleteUi`).
+
+| File | Hunks | Change | Marker |
+|---|---|---|---|
+| `android/app/src/main/java/dev/nxnative/android/StorageUi.java` | 1 | one line in `show()` after the per-game "Remove … data…" buttons: `dev.peanuts.ui.BuildDeleteUi.section(a, box, d)` | `// PEANUTS:` |
+
+Peanuts' own files: `dev/peanuts/build/BuildFiles.java` (new), `dev/peanuts/ui/BuildDeleteUi.java` (new), `dev/peanuts/ui/Upstream.java` (the list, the save folder, the picked folders, the
+remembered job and Home's refresh by reflection), `GameSheet.java` (Delete the build… under Rebuild), `LibrarySettings.java`, `SettingsSections.java`, `SettingsHelp.java` (the Built games
+row), `jvmtest/.../BuildFilesJvmTest.java`, `peanuts/tests/test_build_delete.py`.
+
+Tests: `peanuts/tests/test_build_delete.py` (the JVM part: 81 checks; the wiring and the upstream names it reflects on), `test_settings_sections.py`, `test_settings_explain.py`,
+`test_share_log_choice.py`. Upstream candidate: no (the library and its build are this fork's).

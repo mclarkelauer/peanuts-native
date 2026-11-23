@@ -113,6 +113,7 @@ final class StorageUi {
         }
         AlertDialog[] d = {null};
         for (Game g : games) Ui.add(box, Ui.button(a, "Remove " + g.name + " data…", Ui.Kind.TONAL, v -> { d[0].dismiss(); gameData(a, r, games, g); }), 6);
+        dev.peanuts.ui.BuildDeleteUi.section(a, box, d);   // PEANUTS: Built games, each with its size and Delete build… (the game back to one to build; dev.peanuts.build.BuildFiles)
         AlertDialog.Builder b = Ui.sheet(a, "Storage", box).setNegativeButton("Close", null);
         if (!items.isEmpty()) b.setPositiveButton("Remove ticked", (x, w) -> {
             List<StorageScan.Item> pick = new ArrayList<>();

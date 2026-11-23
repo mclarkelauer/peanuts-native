@@ -235,6 +235,12 @@ public final class GameSheet {
             again.setEnabled(!building);
             PUi.add(box, again, 4, PUi.wrap());
         }
+        // Delete the build (BuildDeleteUi, BuildFiles): the build's files out of the storage and the game back to one to build, as before its first Build
+        if (ready) {
+            View del = PUi.button(a, "Delete the build…", PUi.Kind.QUIET, Haptics.on(Haptics.Word.TICK, v -> BuildDeleteUi.delete(a, title, () -> { if (dialog != null) dialog.dismiss(); })));
+            del.setEnabled(!building);
+            PUi.add(box, del, 4, PUi.wrap());
+        }
         // Import pack… before the first build (GitHub issue #44): a pack made on a PC or exported from another phone goes where this Build would put its own
         // (PackImportUi). A built game has it on its page's Storage tab (upstream's PackUi)
         if (PackImportUi.offered(title)) {

@@ -18,6 +18,7 @@ call `Haptics` themselves, and both would play.
 | `MainActivity.onActivityResult()` | `if (dev.peanuts.ui.LibrarySettings.result(this, request, result, data)) return;` first (requests 60–66) |
 | `AndroidManifest.xml` | `CatalogActivity` under `@style/Theme.Banana`; no Peanuts launcher entry (MainActivity keeps LAUNCHER) |
 | `src/ondevice/AndroidManifest.xml` | the `BuildService` line (import → Prepare → companion) |
+| `StorageUi.show()` | `dev.peanuts.ui.BuildDeleteUi.section(a, box, d);` after the "Remove <game> data…" buttons: the **Built games** section (Delete build) |
 
 `gameCard`, `manage`, `refresh` stay private in MainActivity: the hook passes them as method references (`addGame` stays in MainActivity, unused by Home since SPEC3).
 
@@ -37,6 +38,10 @@ call `Haptics` themselves, and both would play.
 - `SettingsPage`, `SettingsSections`, `Icons` — Settings in ten sections: the table of which row goes where (by title; a row it does not know goes to
   the section of its old heading, under More), the page that shows one section (a sidebar on a window 600 dp wide or more, a drawer on a phone), and the
   Peanuts icons (`pi_*` drawables, their two colours from a style; found by name, so a build without the Peanuts resources keeps its emoji).
+- `BuildDeleteUi` — Delete build: every built game with the space its build takes (Settings › Storage's Built games section, Settings › Library › Built games, the
+  game sheet's Delete the build…), the question that names what goes (`dev.peanuts.build.BuildFiles`: the work folders, the pack, the builds with mods, the app's
+  own files for the game; the .nup made from the dumps as a tick box), the deletion off the main thread, then upstream's list entries of the game removed and the
+  library scanned again, so the game is one to build. Saves, dumps and the game file are never touched.
 - `SettingsHelp` — what each Settings row does and its app default, for the second display's explanation of the row the focus is on
   (`BottomScreen.explain`, `BottomPanel`'s explanation page).
 - `AboutPage`, `AboutData`, `Cracked`, `CrackedCount`, `CrackedPeanut`, `Crack`, `PeanutArt` — Settings › About and Peanuts cracked: the four tabs, the

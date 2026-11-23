@@ -157,6 +157,117 @@ final class Upstream {
         } catch (Throwable t) { Log.w("peanuts", "launch: " + cause(t)); return false; }
     }
 
+    // ---- Delete build (BuildDeleteUi): the places upstream knows, and the list entries that go with a build ----
+
+    /** AppStorage.root(c): the app's external files folder (packs/, temp/, logs/, saves/), else its internal one */
+    static File appRoot(Context c) {
+        try {
+            Method m = Class.forName(P + "AppStorage").getDeclaredMethod("root", Context.class);
+            m.setAccessible(true);
+            return (File) m.invoke(null, c);
+        } catch (Throwable t) { Log.w("peanuts", "appRoot: " + cause(t)); return c.getExternalFilesDir(null) != null ? c.getExternalFilesDir(null) : c.getFilesDir(); }
+    }
+
+    /** Upstream's list entries of one title (Game.load), without the readiness check: where each game file and its pack are */
+    static List<Entry> listedOf(Context c, String titleId) {
+        List<Entry> out = new ArrayList<>();
+        try {
+            Class<?> game = Class.forName(P + "Game");
+            Method load = game.getDeclaredMethod("load", Context.class); load.setAccessible(true);
+            for (Object g : (List<?>) load.invoke(null, c)) {
+                Entry e = entryOf(g);
+                if (e != null && e.titleId.equalsIgnoreCase(titleId)) out.add(e);
+            }
+        } catch (Throwable t) { Log.w("peanuts", "game list unreadable: " + cause(t)); }
+        return out;
+    }
+
+    /** Folders.save(c, game): the save folder a list entry plays with (picked, else the app's), null when it cannot be told */
+    static File saveOf(Context c, Entry e) {
+        try {
+            Class<?> k = Class.forName(P + "Game");
+            java.lang.reflect.Constructor<?> ctor = k.getDeclaredConstructor(String.class, String.class, String.class, String.class);
+            ctor.setAccessible(true);
+            Method m = Class.forName(P + "Folders").getDeclaredMethod("save", Context.class, k);
+            m.setAccessible(true);
+            return (File) m.invoke(null, c, ctor.newInstance(e.titleId, e.name, e.gameDir, e.packDir));
+        } catch (Throwable t) { Log.w("peanuts", "saveOf " + e.titleId + ": " + cause(t)); return null; }
+    }
+
+    /** Prefs.folder(c, key): a folder the player picked ("save_&lt;title ID&gt;", "pack_&lt;title ID&gt;"), null when none */
+    static String pickedFolder(Context c, String key) {
+        try {
+            Method m = Class.forName(P + "Prefs").getDeclaredMethod("folder", Context.class, String.class);
+            m.setAccessible(true);
+            Object o = m.invoke(null, c, key);
+            return o == null ? null : o.toString();
+        } catch (Throwable t) { Log.w("peanuts", "folder " + key + ": " + cause(t)); return null; }
+    }
+
+    /** Prefs.folder(c, key, null): the picked folder let go (nothing on the storage changes) */
+    static void forgetFolder(Context c, String key) {
+        try {
+            Method m = Class.forName(P + "Prefs").getDeclaredMethod("folder", Context.class, String.class, String.class);
+            m.setAccessible(true);
+            m.invoke(null, c, key, null);
+        } catch (Throwable t) { Log.w("peanuts", "forget folder " + key + ": " + cause(t)); }
+    }
+
+    /** PackUi.busy(titleId): an export or import of this game's pack on its Storage tab is working */
+    static boolean packBusy(String titleId) {
+        try {
+            Method m = Class.forName(P + "PackUi").getDeclaredMethod("busy", String.class);
+            m.setAccessible(true);
+            return Boolean.TRUE.equals(m.invoke(null, titleId));
+        } catch (Throwable t) { Log.w("peanuts", "packBusy: " + cause(t)); return false; }
+    }
+
+    /**
+     * The list entries that match go (Game.load, Game.save under Game's own lock, as upstream's Remove from list does); true when the list changed. On the UI
+     * thread, where upstream loads and saves the list. Nothing on the storage changes.
+     */
+    static boolean removeEntries(Context c, java.util.function.Predicate<Entry> which) {
+        try {
+            Class<?> g = Class.forName(P + "Game");
+            Method load = g.getDeclaredMethod("load", Context.class), save = g.getDeclaredMethod("save", Context.class, List.class);
+            load.setAccessible(true); save.setAccessible(true);
+            synchronized (g) {
+                @SuppressWarnings("unchecked") List<Object> games = (List<Object>) load.invoke(null, c);
+                boolean gone = games.removeIf(x -> { Entry e = entryOf(x); return e != null && which.test(e); });
+                if (!gone) return false;
+                save.invoke(null, c, games);
+            }
+            return true;
+        } catch (Throwable t) { Log.w("peanuts", "remove entries: " + cause(t)); return false; }
+    }
+
+    /** Job.remembered(c): the Prepare job file Home's card shows, null when none or when this app has no on-device packer */
+    static File rememberedJob(Context c) {
+        try {
+            Method m = Class.forName(P + "Job").getDeclaredMethod("remembered", Context.class);
+            m.setAccessible(true);
+            return (File) m.invoke(null, c);
+        } catch (Throwable t) { return null; }
+    }
+
+    /** Job.remember(c, null): Home's Prepare card forgets its job (the files are the caller's business) */
+    static void forgetJob(Context c) {
+        try {
+            Method m = Class.forName(P + "Job").getDeclaredMethod("remember", Context.class, File.class);
+            m.setAccessible(true);
+            m.invoke(null, c, (File) null);
+        } catch (Throwable t) { Log.w("peanuts", "forget job: " + cause(t)); }
+    }
+
+    /** MainActivity.refresh(): Home drawn again from upstream's list; nothing when a is not Home */
+    static void refreshHome(android.app.Activity a) {
+        try {
+            Method m = Class.forName(P + "MainActivity").getDeclaredMethod("refresh");
+            m.setAccessible(true);
+            if (Class.forName(P + "MainActivity").isInstance(a)) m.invoke(a);
+        } catch (Throwable t) { Log.w("peanuts", "refresh: " + cause(t)); }
+    }
+
     private static Field field(Class<?> k, String n) throws NoSuchFieldException { Field f = k.getDeclaredField(n); f.setAccessible(true); return f; }
     private static String str(Object o) { return o == null ? "" : o.toString(); }
     private static Throwable cause(Throwable t) { return t.getCause() != null ? t.getCause() : t; }

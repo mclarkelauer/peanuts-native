@@ -33,6 +33,7 @@ public final class SettingsHelp {
         put(m, "Folders", "One game's folders: where its game files, its pack and its saves are. With more than one game, it asks which game first.", null);
         put(m, "Rescan", "Reads the folders again, for games you added or removed while the app was open.", null);
         put(m, "Free up space", "Deletes the original dump of a game that is built already. The game keeps playing from its build. Keep the original while a later update may come: an update needs it.", null);
+        put(m, "Built games", "Lists every built game with the space its build takes. Deleting a build frees that space and lists the game as one to build again, as before its first Build. Your saves and your dumps stay.", null);
         put(m, "Storage", "Finds leftovers and old files the app no longer needs, and removes the ones you tick. Saves are never listed.", null);
         put(m, "Played", "The time you played every game in this app, counted only while a game runs. Each game's own time is on its page and on the second screen's card.", null);
         // Console
