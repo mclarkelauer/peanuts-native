@@ -177,6 +177,31 @@ running.
 
 More questions and troubleshooting: [FAQ.md](peanuts/docs/FAQ.md).
 
+## Release
+
+This is the AYN Thor fork, [mclarkelauer/peanuts-native](https://github.com/mclarkelauer/peanuts-native): upstream
+[igawa6/peanuts-native](https://github.com/igawa6/peanuts-native) plus **Delete build** (above). Its releases are on this
+repository's [releases page](https://github.com/mclarkelauer/peanuts-native/releases), one APK each,
+`peanuts-native-<tag>-arm64-v8a.apk`.
+
+- **Tags:** `v<upstream version>-thor.<n>`, for example `v0.1.7-thor.1` is the first fork release of upstream's 0.1.7. The
+  tag's annotated message is the release notes. `peanuts/VERSION` must name the same upstream version.
+- **Obtainium:** add the app from `https://github.com/mclarkelauer/peanuts-native`. The asset name keeps its prefix
+  and its `-arm64-v8a.apk` suffix across releases, so a filter written once keeps matching.
+- **How it is built:** pushing the tag runs [`.github/workflows/release.yml`](.github/workflows/release.yml), which
+  runs [`.github/release-build.sh`](.github/release-build.sh) and attaches the APK to a GitHub Release. The script is
+  upstream's own recipe (`-PnxRelease=true`, the games of `peanuts/release-titles.txt`, the real on-device packer built
+  by `peanuts/scripts/ondevice-stage.sh`, the prewarm seeds taken from upstream's APK of the same version and checked
+  against `peanuts/prewarm-sha256.tsv`), then `check-min-api.py`, `check-apk-holes.py` and `apksigner verify`. The
+  versionCode is made from the tag (`0.1.7-thor.1` → 10701). The same script runs on a Linux machine with a JDK the
+  Gradle wrapper supports (17 or 21), zsh, cmake, ninja, the .NET 10 SDK, the Android SDK with NDK 28.2.13676358 and the
+  three signing variables below.
+- **Signing:** the APK is signed with the fork's own key, never upstream's, so it does not install over an upstream
+  Peanuts Native (same package name, other signer): uninstall that one first. The key lives outside the tree; the
+  workflow reads it from the repository secrets `NX_SIGN_STORE_BASE64` (the keystore, `base64 -w0`), `NX_SIGN_ALIAS` and
+  `NX_SIGN_PASS`, and the script from the environment variables `NX_SIGN_STORE` (the keystore file), `NX_SIGN_ALIAS` and
+  `NX_SIGN_PASS`.
+
 ## Contributing
 
 See [CONTRIBUTING.md](peanuts/docs/CONTRIBUTING.md) for adding a game, fixing a bug and testing on a device. Run
